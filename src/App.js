@@ -7,7 +7,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Implemented CICD integration with AWS and Github action
+          Implemented CICD integration with AWS and CircleCI
         </p>
         <a
           className="App-link"
