@@ -1,5 +1,5 @@
 jobs:
-  build_deploy:
+  build-n-deploy:
     machine:
       image: ubuntu-2004:202107-02
     steps:
@@ -17,4 +17,4 @@ workflows:
   version: 2
   execute_bulk:
     jobs:
-      - build-deploy
+      - build-n-deploy
