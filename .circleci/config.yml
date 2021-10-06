@@ -26,6 +26,7 @@ jobs:
 
       - run: yarn test
 
+
       - run: yarn build
 
       - aws-s3/sync:
