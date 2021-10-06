@@ -1,20 +1,36 @@
+version: 2.1
+orbs:
+  aws-s3: circleci/aws-s3@3.0.0
 jobs:
-  build-n-deploy:
-    machine:
-      image: ubuntu-2004:202107-02
+  build:
+    docker:
+      - image: cimg/node:16.10.0
+
+    working_directory: ~/repo
+
     steps:
       - checkout
-      - run:
-          name: Installing AWS CLI
-          command: |
-            sudo apt-get update
-            sudo apt install python3-pip
-            sudo pip3 install awsebcli --upgrade
-      - run: npm install && npm run build
-      - run: aws s3 sync build/ s3://react-cicd-demo-github-action
 
-workflows:
-  version: 2
-  execute_bulk:
-    jobs:
-      - build-n-deploy
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
+      - run: yarn install
+
+      - save_cache:
+          paths:
+            - node_modules
+            - ~/.npm
+            - ~/.cache
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run: yarn test
+
+      - run: yarn build
+
+      - aws-s3/sync:
+          from: build
+          to: "s3://react-cicd-demo-github-action"
+          arguments: |
+            --acl public-read \
+            --cache-control "max-age=86400"
